@@ -13,10 +13,12 @@ DB_Dir = "./vectorDB"
 
 def build_vector_DB():
     print("Creating new Vector Database")
-    df = pd.read_csv("./data/all_phones.csv")
+    # Prefer all_phones_2 which includes image links
+    csv_path = "./data/phones.csv"
+    if not os.path.exists(csv_path):
+        csv_path = "./data/all_phones.csv"
 
-    # df["Mobile Name"] = (df["brand"].fillna("") + " " + df["model"].fillna("") + " " + df["variant"].fillna("")).str.strip().str.lower()
-    # print(df.head())
+    df = pd.read_csv(csv_path)
 
     documents = []
 
@@ -34,7 +36,9 @@ def build_vector_DB():
                 "brand" : row.get('brand'),
                 "model": row.get('model'),
                 "variant": row.get('variant'),
-                "price": row.get('price')
+                "price": row.get('price'),
+                # include image/link so retriever can show images if needed
+                "image": row.get('link') or row.get('image') or ''
             }  
         )
 
